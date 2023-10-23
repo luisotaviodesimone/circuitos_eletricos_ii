@@ -1,5 +1,7 @@
 import numpy as np
 
+# NOTE: Ask how the modified stamps should be done
+
 def current_source(line: str, I_matrix: np.ndarray):
   [name, drain_node, inject_node, current_type, value, *_] = line.split(' ')
 

@@ -7,7 +7,7 @@ params_file = open(f'{dir_name}ParametrosEntradaMain.txt', 'r')
 for params in params_file.readlines():
   if lotdsread.should_ignore_line(params):
     continue
-  t2.main(f'{os.getcwd()}\\netlists\\netlistAC1.txt','AC',[1], [0.01, 100, 100], True)
+  t2.main(f'{os.getcwd()}\\netlists\\netlistAC1.txt','AC',[1], [0.01, 100, 100], False)
 
 
   # eval(execution)
