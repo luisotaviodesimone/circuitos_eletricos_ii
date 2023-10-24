@@ -25,6 +25,10 @@ def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: floa
                 g_matrix, i_matrix = lotdsstamp.inductor(line, g_matrix, i_matrix, w)
             elif line.startswith("V"):
                 g_matrix, i_matrix = lotdsstamp.voltage_source(line, g_matrix, i_matrix)
+            elif line.startswith("H"):
+                g_matrix, i_matrix = lotdsstamp.current_controlled_voltage_source(
+                    line, g_matrix, i_matrix
+                )
             else:
                 raise Exception("Not known component")
     return g_matrix, i_matrix

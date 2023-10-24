@@ -1,7 +1,4 @@
-from re import I
 import numpy as np
-
-# NOTE: Ask how the modified stamps should be done
 
 
 def current_source(line: str, I_matrix: np.ndarray):
@@ -111,7 +108,55 @@ def voltage_controlled_current_source(line: str, G_matrix: np.ndarray):
 
     return G_matrix
 
-def current_controlled_current_source():
+
+def current_controlled_voltage_source(
+    line: str, G_matrix: np.ndarray, I_matrix: np.ndarray
+):
+    [
+        name,
+        pos_node,
+        neg_node,
+        from_control_node,
+        to_control_node,
+        value,
+        *_,
+    ] = line.split(" ")
+
+    pos_node = int(pos_node)
+    neg_node = int(neg_node)
+    from_control_node = int(from_control_node)
+    to_control_node = int(to_control_node)
+    value = float(value)
+
+    ix_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
+    ix_column[from_control_node, 0] = 1
+    ix_column[to_control_node, 0] = -1
+
+    iy_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
+    iy_column[pos_node, 0] = 1
+    iy_column[neg_node, 0] = -1
+
+    G_matrix = np.c_[G_matrix, ix_column, iy_column]
+
+    ix_row = np.zeros((1, G_matrix.shape[1]), dtype=np.complex128)
+    ix_row[0, from_control_node] = -1
+    ix_row[0, to_control_node] = 1
+
+    iy_row = np.zeros((1, G_matrix.shape[1]), dtype=np.complex128)
+    iy_row[0, pos_node] = -1
+    iy_row[0, neg_node] = 1
+    iy_row[0, -2] = value
+
+    G_matrix = np.r_[G_matrix, ix_row, iy_row]
+
+    I_matrix = np.r_[I_matrix, np.zeros((2, 1))]
+
+    return G_matrix, I_matrix
+
+
+def current_controlled_current_source(
+    line: str, G_matrix: np.ndarray, I_matrix: np.ndarray
+):
     pass
 
 

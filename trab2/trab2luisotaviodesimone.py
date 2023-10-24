@@ -67,14 +67,9 @@ def main(
             )
 
             mounted_g_matrix = mounted_g_matrix[1:, 1:]
-            print("mounted_g_matrix", mounted_g_matrix, end="\n\n", sep="\n")
             mounted_i_matrix = mounted_i_matrix[1:]
-            print("mounted_i_matrix", mounted_i_matrix, end="\n\n", sep="\n")
 
             voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
-
-            print("voltage_matrix", voltage_matrix, end="\n\n", sep="\n")
-            # break
 
             for j in range(len(desired_nodes)):
                 desired_voltage_modules[j, i] = 20 * np.log10(

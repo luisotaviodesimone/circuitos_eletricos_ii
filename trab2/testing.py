@@ -1,47 +1,29 @@
 import os
-
-import numpy as np
 import trab2luisotaviodesimone as t2
-import lotdsread
-from plot import plot_bode_duo, plot_bode_uni
+from plot import plot_bode_duo
 
 
-# dir_name = f'{os.getcwd()}/netlists/'
-# params_file = open(f'{dir_name}ParametrosEntradaMain.txt', 'r')
-# for params in params_file.readlines():
-#   if lotdsread.should_ignore_line(params):
-#     continue
+def execute(netlist_file, current_type, desired_nodes, params, enable_print=False):
+    frequencies, desired_nodes_modules, desired_nodes_phases = t2.main(
+        f"{os.getcwd()}\\netlists\\{netlist_file}",
+        current_type,
+        desired_nodes,
+        params,
+        enable_print,
+    )
 
-frequencies, desired_nodes_modules, desired_nodes_phases = t2.main(
-    # (f'{os.getcwd()}\\netlists\\netlistAC1.txt','AC',[1], [-2, 2, 100], True) # AC1
-    # f"{os.getcwd()}/netlists/netlistAC2.txt",
-    # "AC",
-    # [1],
-    # [-2, 2, 100],
-    # False  # AC2
-    # f"{os.getcwd()}/netlists/netlistAC3.txt",
-    # "AC",
-    # [1, 2],
-    # [-2, 2, 100],
-    # False,  # AC3
+    for i in range(len(desired_nodes)):
+        plot_bode_duo(
+            frequencies, desired_nodes_modules[i], desired_nodes_phases[i], netlist_file
+        )
 
-    # f"{os.getcwd()}/netlists/netlistAC4.txt",
-    # "AC",
-    # [2, 3],
-    # [-2, 2, 100],
-    # False,  # AC4
 
-    f"{os.getcwd()}/netlists/netlistAC5.txt",
-    "AC",
-    [3],
-    [-2, 2, 100],
-    False,  # AC5
-)
+# execute("netlistAC1.txt", "AC", [1], [-2, 2, 100])  # AC1
+# execute("netlistAC2.txt", "AC", [1], [-2, 2, 100])  # AC2
+# execute("netlistAC3.txt", "AC", [2], [-2, 2, 100])  # AC3
+# execute("netlistAC4.txt", "AC", [2, 3], [-2, 2, 100])  # AC4
+# execute("netlistAC5.txt", "AC", [3], [-2, 2, 100])  # AC5
 
-for i in range(len([2, 3])):
-    plot_bode_duo(frequencies, desired_nodes_modules[i], desired_nodes_phases[i])
-
-# eval(execution)
 
 """
 Params:
