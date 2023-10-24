@@ -1,8 +1,8 @@
 import sympy as sp
 import numpy as np
 
-s = sp.Symbol('s')
-m = sp.Symbol('m')
+s = sp.Symbol("s")
+m = sp.Symbol("m")
 
 # matrixA = sp.Matrix([
 #   [8 + 2*s, 2*s, 0, -1, 0],
@@ -19,12 +19,14 @@ m = sp.Symbol('m')
 # ])
 
 
-matrixA = sp.Matrix([
-  [1/16 + 1/9, 0, -1/9, 0],
-  [-1/16, -1/(3), 0, 0],
-  [0, -1/5, -1 + s*2, -1],
-  [0, -1, 0, s*5]
-])
+matrixA = sp.Matrix(
+    [
+        [1 / 16 + 1 / 9, 0, -1 / 9, 0],
+        [-1 / 16, -1 / (3), 0, 0],
+        [0, -1 / 5, -1 + s * 2, -1],
+        [0, -1, 0, s * 5],
+    ]
+)
 
 # matrixB = sp.Matrix([
 #   [2-3/s],
@@ -40,19 +42,14 @@ matrixA = sp.Matrix([
 #   [-8]
 # ])
 
-matrixB = sp.Matrix([
-  [0],
-  [0],
-  [2*7],
-  [5*11]
-])
+matrixB = sp.Matrix([[0], [0], [2 * 7], [5 * 11]])
 
 
 solution = matrixA.solve(matrixB)
 
 print(np.array(solution))
 
-H = solution[2]/solution[0]
+H = solution[2] / solution[0]
 
 print()
 print(sp.simplify(H))
