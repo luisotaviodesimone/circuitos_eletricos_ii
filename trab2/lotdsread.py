@@ -29,6 +29,10 @@ def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: floa
                 g_matrix, i_matrix = lotdsstamp.current_controlled_voltage_source(
                     line, g_matrix, i_matrix
                 )
+            elif line.startswith("E"):
+                g_matrix, i_matrix = lotdsstamp.voltage_controlled_voltage_source(
+                    line, g_matrix, i_matrix
+                )
             else:
                 raise Exception("Not known component")
     return g_matrix, i_matrix

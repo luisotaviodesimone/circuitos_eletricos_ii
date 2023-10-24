@@ -23,6 +23,8 @@ def execute(netlist_file, current_type, desired_nodes, params, enable_print=Fals
 # execute("netlistAC3.txt", "AC", [2], [-2, 2, 100])  # AC3
 # execute("netlistAC4.txt", "AC", [2, 3], [-2, 2, 100])  # AC4
 # execute("netlistAC5.txt", "AC", [3], [-2, 2, 100])  # AC5
+# TODO: Check why AC5 is not much similar to answer
+execute("netlistAC6.txt", "AC", [2, 5], [-2, 2, 100])  # AC6
 
 
 """

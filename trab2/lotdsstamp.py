@@ -78,7 +78,7 @@ def capacitor(line: str, G_matrix: np.ndarray, w: float):
 
     from_node = int(from_node)
     to_node = int(to_node)
-    value = int(value)
+    value = float(value)
 
     insertion = 1j * w * value
 
@@ -154,10 +154,42 @@ def current_controlled_voltage_source(
     return G_matrix, I_matrix
 
 
-def current_controlled_current_source(
+def voltage_controlled_voltage_source(
     line: str, G_matrix: np.ndarray, I_matrix: np.ndarray
 ):
-    pass
+    [
+        name,
+        pos_node,
+        neg_node,
+        pos_control_node,
+        neg_control_node,
+        value,
+        *_,
+    ] = line.split(" ")
+
+    pos_node = int(pos_node)
+    neg_node = int(neg_node)
+    pos_control_node = int(pos_control_node)
+    neg_control_node = int(neg_control_node)
+    value = float(value)
+
+    i_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
+    i_column[pos_node, 0] = 1
+    i_column[neg_node, 0] = -1
+
+    G_matrix = np.c_[G_matrix, i_column]
+
+    i_row = np.zeros((1, G_matrix.shape[1]), dtype=np.complex128)
+    i_row[0, pos_node] = -1
+    i_row[0, neg_node] = 1
+    i_row[0, -1] = -value
+    i_row[0, -2] = value
+
+    G_matrix = np.r_[G_matrix, i_row]
+
+    I_matrix = np.r_[I_matrix, np.zeros((1, 1))]
+
+    return G_matrix, I_matrix
 
 
 def inductor(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float):
