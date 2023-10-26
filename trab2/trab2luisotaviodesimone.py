@@ -89,13 +89,3 @@ def main(
 
         return frequencies, desired_voltage_modules, desired_voltage_phases
 
-
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        raise Exception(color("Please, provide a netlist file", "red"))
-
-    netlist = f"./netlists/{sys.argv[1]}.txt"
-
-    # result = main(netlist)
-
-    # print(result)
