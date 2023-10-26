@@ -1,6 +1,7 @@
 import os
 import trab2luisotaviodesimone as t2
 from plot import plot_bode_duo
+import numpy as np
 
 
 def executeAC(netlist_file, current_type, desired_nodes, params, enable_print=False):
@@ -31,8 +32,6 @@ def executeDC(netlist_file, current_type, desired_nodes, params, enable_print=Fa
         enable_print,
     )
 
-    print("voltage_matrix", voltage_matrix, end="\n\n", sep="\n")
-
     return voltage_matrix
 
 
@@ -51,15 +50,37 @@ def alternated_current():
     executeAC("netlistAC10.txt", "AC", [4, 5], [0.01, 500, 1000])  # AC10
 
 
-alternated_current()
+# alternated_current()
+
+
+def compareDC(execution, result):
+    print(
+        f"{execution} == {result} \n",
+        np.allclose(execution, result, rtol=1e-03, atol=1e-03),
+        "\n",
+    )
 
 
 def continuous_current():
-    print(executeAC("netlistDC1.txt", "DC", [2], []) == [6.0])  # DC1
-    print(
-        executeAC("netlistDC2.txt", "DC", [2, 3, 5, 7, 9, 10], [])
-        == [8, 1, 8.4, 0.93333333, -5.6, -3.73333333]
+    print("netlistDC1.txt")
+    compareDC(executeDC("netlistDC1.txt", "DC", [2], []), [6.0])  # DC1
+    print("netlistDC2.txt")
+    compareDC(
+        executeDC("netlistDC2.txt", "DC", [2, 3, 5, 7, 9, 10], []),
+        [8, 1, 8.4, 0.93333333, -5.6, -3.73333333],
     )  # DC2
+    print("netlistDC3.txt")
+    compareDC(
+        executeDC("netlistDC3.txt", "DC", [1, 2, 3, 4, 5, 6, 7], []),
+        [10.0, 5.7554841, 2.49323451, 4.37608413, 2.28100871, 5.7554841, 6.37608413],
+    )  # DC3
+    print("netlistDC4.txt")
+    compareDC(executeDC("netlistDC4.txt", "DC", [2], []), [6.0])
+    print("netlistDC5.txt")
+    compareDC(executeDC("netlistDC5.txt", "DC", [2], []), [10.0])
+    # TODO: DC6 is not working, the node 3 is 0 instead of 0.5, probably a problem in the transformer stamp
+    print("netlistDC6.txt")
+    compareDC(executeDC("netlistDC6.txt", "DC", [3, 4, 5], []), [0.5, 0, 0])
 
 
 continuous_current()

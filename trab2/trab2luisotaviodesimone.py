@@ -33,7 +33,7 @@ def main(
     desired_nodes: list[int],
     params: list = [0, 0, 0],
     enable_print: bool = False,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
     g_matrix, i_matrix = create_g_matrix_and_i_matrix(netlist_file)
 
     if current_type == "DC":
@@ -49,7 +49,11 @@ def main(
         if enable_print:
             print_voltage_matrix(voltage_matrix, netlist_file)
 
-        return voltage_matrix, np.zeros(()), np.zeros(())
+        result = np.array([])
+        for i in range(len(desired_nodes)):
+            result = np.append(result, voltage_matrix[desired_nodes[i] - 1, 0].real)
+
+        return result
 
     else:  # AC
         frequencies = np.logspace(params[0], params[1], params[2])
@@ -82,9 +86,6 @@ def main(
                 desired_voltage_phases[j, i] = np.degrees(
                     np.angle(voltage_matrix[desired_nodes[j] - 1])
                 )
-
-            if enable_print:
-                print_voltage_matrix(voltage_matrix, netlist_file)
 
         return frequencies, desired_voltage_modules, desired_voltage_phases
 
