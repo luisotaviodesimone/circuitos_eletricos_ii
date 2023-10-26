@@ -38,7 +38,7 @@ def main(
 
     if current_type == "DC":
         mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
-            netlist_file, g_matrix, i_matrix, params[0] * 2 * np.pi
+            netlist_file, g_matrix, i_matrix
         )
 
         mounted_g_matrix = mounted_g_matrix[1:, 1:]
@@ -54,13 +54,17 @@ def main(
     else:  # AC
         frequencies = np.logspace(params[0], params[1], params[2])
 
-        desired_voltage_modules = np.zeros((len(desired_nodes), frequencies.shape[0]))
-        desired_voltage_phases = np.zeros((len(desired_nodes), frequencies.shape[0]))
+        desired_voltage_modules = np.zeros(
+            (len(desired_nodes), frequencies.shape[0]), dtype=np.complex128
+        )
+        desired_voltage_phases = np.zeros(
+            (len(desired_nodes), frequencies.shape[0]), dtype=np.complex128
+        )
 
         for i in range(len(frequencies)):
             g_matrix, i_matrix = create_g_matrix_and_i_matrix(netlist_file)
 
-            omega = frequencies[i] * 2 * np.pi
+            omega = float(frequencies[i] * 2 * np.pi)
 
             mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
                 netlist_file, g_matrix, i_matrix, omega

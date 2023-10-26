@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 
 
-def plot_bode_duo(freqs, modulos, fases, netlist_file):
-    plt.figure(num=netlist_file)
+def plot_bode_duo(freqs, modulos, fases, netlist_file, desired_node):
+    plt.figure(num=f"{netlist_file}-Node {desired_node}")
 
     plt.subplot(1, 2, 1)
     plt.title("Módulo")

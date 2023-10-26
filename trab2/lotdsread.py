@@ -6,23 +6,21 @@ def should_ignore_line(line: str) -> bool:
     return ["*", " ", "", "\n"].count(line[0]) > 0
 
 
-def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: float):
+def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: float = 0):
     with open(filepath) as f:
         for line in f:
             if should_ignore_line(line):
                 continue
-            elif line.startswith("I"):
-                i_matrix = lotdsstamp.current_source(line, i_matrix)
             elif line.startswith("R"):
                 g_matrix = lotdsstamp.resistence(line, g_matrix)
-            elif line.startswith("G"):
-                g_matrix = lotdsstamp.voltage_controlled_current_source(line, g_matrix)
-            elif line.startswith("K"):
-                g_matrix, i_matrix = lotdsstamp.transformer(line, g_matrix, i_matrix, w)
             elif line.startswith("C"):
                 g_matrix = lotdsstamp.capacitor(line, g_matrix, w)
             elif line.startswith("L"):
                 g_matrix, i_matrix = lotdsstamp.inductor(line, g_matrix, i_matrix, w)
+            elif line.startswith("I"):
+                i_matrix = lotdsstamp.current_source(line, i_matrix)
+            elif line.startswith("G"):
+                g_matrix = lotdsstamp.voltage_controlled_current_source(line, g_matrix)
             elif line.startswith("V"):
                 g_matrix, i_matrix = lotdsstamp.voltage_source(line, g_matrix, i_matrix)
             elif line.startswith("H"):
@@ -33,6 +31,13 @@ def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: floa
                 g_matrix, i_matrix = lotdsstamp.voltage_controlled_voltage_source(
                     line, g_matrix, i_matrix
                 )
+            elif line.startswith("F"):
+                g_matrix, i_matrix = lotdsstamp.current_controlled_current_source(
+                    line, g_matrix, i_matrix
+                )
+            elif line.startswith("K"):
+                g_matrix, i_matrix = lotdsstamp.transformer(line, g_matrix, i_matrix, w)
             else:
                 raise Exception("Not known component")
+
     return g_matrix, i_matrix

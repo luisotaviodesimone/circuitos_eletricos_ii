@@ -61,7 +61,7 @@ def resistence(line: str, G_matrix: np.ndarray):
 
     from_node = int(from_node)
     to_node = int(to_node)
-    value = int(value)
+    value = float(value)
 
     insertion = 1 / value
 
@@ -99,7 +99,7 @@ def voltage_controlled_current_source(line: str, G_matrix: np.ndarray):
     inject_node = int(inject_node)
     pos_control = int(pos_control)
     neg_control = int(neg_control)
-    value = int(value)
+    value = float(value)
 
     G_matrix[drain_node, pos_control] += value
     G_matrix[drain_node, neg_control] -= value
@@ -107,6 +107,44 @@ def voltage_controlled_current_source(line: str, G_matrix: np.ndarray):
     G_matrix[inject_node, neg_control] += value
 
     return G_matrix
+
+
+def current_controlled_current_source(
+    line: str, G_matrix: np.ndarray, I_matrix: np.ndarray
+):
+    [
+        name,
+        drain_node,
+        inject_node,
+        drain_control_node,
+        inject_control_node,
+        value,
+        *_,
+    ] = line.split(" ")
+
+    drain_node = int(drain_node)
+    inject_node = int(inject_node)
+    drain_control_node = int(drain_control_node)
+    inject_control_node = int(inject_control_node)
+    value = float(value)
+
+    i_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
+    i_column[drain_node, 0] = value
+    i_column[inject_node, 0] = -value
+    i_column[drain_control_node, 0] = 1
+    i_column[inject_control_node, 0] = -1
+
+    G_matrix = np.c_[G_matrix, i_column]
+
+    i_row = np.zeros((1, G_matrix.shape[1]), dtype=np.complex128)
+    i_row[0, drain_control_node] = -1
+    i_row[0, inject_control_node] = 1
+
+    G_matrix = np.r_[G_matrix, i_row]
+
+    I_matrix = np.r_[I_matrix, np.zeros((1, 1))]
+
+    return G_matrix, I_matrix
 
 
 def current_controlled_voltage_source(
@@ -182,8 +220,8 @@ def voltage_controlled_voltage_source(
     i_row = np.zeros((1, G_matrix.shape[1]), dtype=np.complex128)
     i_row[0, pos_node] = -1
     i_row[0, neg_node] = 1
-    i_row[0, -1] = -value
-    i_row[0, -2] = value
+    i_row[0, pos_control_node] = value
+    i_row[0, neg_control_node] = -value
 
     G_matrix = np.r_[G_matrix, i_row]
 
