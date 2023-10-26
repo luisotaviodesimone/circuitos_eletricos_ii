@@ -50,9 +50,6 @@ def alternated_current():
     executeAC("netlistAC10.txt", "AC", [4, 5], [0.01, 500, 1000])  # AC10
 
 
-# alternated_current()
-
-
 def compareDC(execution, result):
     print(
         f"{execution} == {result} \n",
@@ -82,6 +79,8 @@ def continuous_current():
     print("netlistDC6.txt")
     compareDC(executeDC("netlistDC6.txt", "DC", [3, 4, 5], []), [0.5, 0, 0])
 
+
+alternated_current()
 
 continuous_current()
 
