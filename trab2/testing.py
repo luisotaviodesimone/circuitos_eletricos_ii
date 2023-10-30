@@ -44,10 +44,8 @@ def alternated_current():
     executeAC("netlistAC6.txt", "AC", [2, 5], [-2, 2, 100])  # AC6
     executeAC("netlistAC7.txt", "AC", [2, 7], [-2, 2, 100])  # AC7
     executeAC("netlistAC9.txt", "AC", [2, 3, 4, 5, 6], [-2, 2, 100])  # AC9
-    # TODO: AC8 is not working, either a ComplexWarning, RuntimeWarning, OverflowWarning or a Singular Matrix is happening
-    executeAC("netlistAC8.txt", "AC", [4], [-2, 2, 100])  # AC8
-    # TODO: AC10 is not working, either a ComplexWarning, RuntimeWarning, OverflowWarning or a Singular Matrix is happening
-    executeAC("netlistAC10.txt", "AC", [4, 5], [0.01, 500, 1000])  # AC10
+    executeAC("netlistAC8.txt", "AC", [4], [2, 6, 100])  # AC8
+    executeAC("netlistAC10.txt", "AC", [4, 5], [-2, 3, 100])  # AC10
 
 
 def compareDC(execution, result):
@@ -75,7 +73,6 @@ def continuous_current():
     compareDC(executeDC("netlistDC4.txt", "DC", [2], []), [6.0])
     print("netlistDC5.txt")
     compareDC(executeDC("netlistDC5.txt", "DC", [2], []), [10.0])
-    # TODO: DC6 is not working, the node 3 is 0 instead of 0.5, probably a problem in the transformer stamp
     print("netlistDC6.txt")
     compareDC(executeDC("netlistDC6.txt", "DC", [3, 4, 5], []), [0.5, 0, 0])
 
