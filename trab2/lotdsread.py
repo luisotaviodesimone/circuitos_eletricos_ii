@@ -6,7 +6,13 @@ def should_ignore_line(line: str) -> bool:
     return ["*", " ", "", "\n"].count(line[0]) > 0
 
 
-def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: float = 0):
+def read_file(
+    filepath: str,
+    g_matrix: np.ndarray,
+    i_matrix: np.ndarray,
+    circuit_current_type: str,
+    w: float = 0,
+):
     with open(filepath) as f:
         for line in f:
             if should_ignore_line(line):
@@ -18,11 +24,15 @@ def read_file(filepath: str, g_matrix: np.ndarray, i_matrix: np.ndarray, w: floa
             elif line.startswith("L"):
                 g_matrix, i_matrix = lotdsstamp.inductor(line, g_matrix, i_matrix, w)
             elif line.startswith("I"):
-                i_matrix = lotdsstamp.current_source(line, i_matrix)
+                i_matrix = lotdsstamp.current_source(
+                    line, i_matrix, circuit_current_type
+                )
+            elif line.startswith("V"):
+                g_matrix, i_matrix = lotdsstamp.voltage_source(
+                    line, g_matrix, i_matrix, circuit_current_type
+                )
             elif line.startswith("G"):
                 g_matrix = lotdsstamp.voltage_controlled_current_source(line, g_matrix)
-            elif line.startswith("V"):
-                g_matrix, i_matrix = lotdsstamp.voltage_source(line, g_matrix, i_matrix)
             elif line.startswith("H"):
                 g_matrix, i_matrix = lotdsstamp.current_controlled_voltage_source(
                     line, g_matrix, i_matrix

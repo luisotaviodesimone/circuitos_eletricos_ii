@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def current_source(line: str, I_matrix: np.ndarray):
+def current_source(line: str, I_matrix: np.ndarray, circuit_current_type: str):
     [name, drain_node, inject_node, current_type, value_or_amp, *phase] = line.split(
         " "
     )
@@ -15,7 +15,10 @@ def current_source(line: str, I_matrix: np.ndarray):
     else:
         phase = float(phase[0])
 
-    insertion = value_or_amp * np.exp(1j * phase)
+    if circuit_current_type != current_type:
+        insertion = 0
+    else:
+        insertion = value_or_amp * np.exp(1j * phase)
 
     I_matrix[drain_node, 0] -= insertion
     I_matrix[inject_node, 0] += insertion
@@ -23,7 +26,9 @@ def current_source(line: str, I_matrix: np.ndarray):
     return I_matrix
 
 
-def voltage_source(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray):
+def voltage_source(
+    line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, circuit_current_type: str
+):
     [name, drain_node, inject_node, current_type, value_or_amp, *phase] = line.split(
         " "
     )
@@ -37,7 +42,10 @@ def voltage_source(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray):
     else:
         phase = float(phase[0])
 
-    insertion = value_or_amp * np.exp(1j * phase)
+    if circuit_current_type != current_type:
+        insertion = 0
+    else:
+        insertion = value_or_amp * np.exp(1j * phase)
 
     i_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
     i_column[drain_node, 0] = 1
@@ -142,7 +150,7 @@ def current_controlled_current_source(
 
     G_matrix = np.r_[G_matrix, i_row]
 
-    I_matrix = np.r_[I_matrix, np.zeros((1, 1))]
+    I_matrix = np.r_[I_matrix, np.zeros((1, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
 
@@ -187,7 +195,7 @@ def current_controlled_voltage_source(
 
     G_matrix = np.r_[G_matrix, ix_row, iy_row]
 
-    I_matrix = np.r_[I_matrix, np.zeros((2, 1))]
+    I_matrix = np.r_[I_matrix, np.zeros((2, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
 
@@ -225,7 +233,7 @@ def voltage_controlled_voltage_source(
 
     G_matrix = np.r_[G_matrix, i_row]
 
-    I_matrix = np.r_[I_matrix, np.zeros((1, 1))]
+    I_matrix = np.r_[I_matrix, np.zeros((1, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
 
@@ -249,7 +257,7 @@ def inductor(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float):
 
     G_matrix = np.r_[G_matrix, i_row]
 
-    I_matrix = np.r_[I_matrix, np.zeros((1, 1))]
+    I_matrix = np.r_[I_matrix, np.zeros((1, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
 
@@ -278,14 +286,10 @@ def transformer(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float)
     iab_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
     iab_column[from_node_1, 0] = 1
     iab_column[to_node_1, 0] = -1
-    # iab_column[-2] = w * 1j * inductor_value_1
-    # iab_column[-1] = w * 1j * mutual_inductor_value
 
     icd_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
     icd_column[from_node_2, 0] = 1
     icd_column[to_node_2, 0] = -1
-    # icd_column[-2] = w * 1j * mutual_inductor_value
-    # icd_column[-1] = w * 1j * inductor_value_2
 
     G_matrix = np.c_[G_matrix, iab_column, icd_column]
 
@@ -303,6 +307,6 @@ def transformer(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float)
 
     G_matrix = np.r_[G_matrix, iab_row, icd_row]
 
-    I_matrix = np.r_[I_matrix, np.zeros((2, 1))]
+    I_matrix = np.r_[I_matrix, np.zeros((2, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
