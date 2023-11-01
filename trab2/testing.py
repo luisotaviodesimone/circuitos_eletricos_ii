@@ -36,16 +36,16 @@ def executeDC(netlist_file, current_type, desired_nodes, params, enable_print=Fa
 
 
 def alternated_current():
-    executeAC("netlistAC1.txt", "AC", [1], [-2, 2, 100])  # AC1
-    executeAC("netlistAC2.txt", "AC", [1], [-2, 2, 100])  # AC2
-    executeAC("netlistAC3.txt", "AC", [2], [-2, 2, 100])  # AC3
-    executeAC("netlistAC4.txt", "AC", [2, 3], [-2, 2, 100])  # AC4
-    executeAC("netlistAC5.txt", "AC", [3], [-2, 2, 100])  # AC5
-    executeAC("netlistAC6.txt", "AC", [2, 5], [-2, 2, 100])  # AC6
-    executeAC("netlistAC7.txt", "AC", [2, 7], [-2, 2, 100])  # AC7
-    executeAC("netlistAC9.txt", "AC", [2, 3, 4, 5, 6], [-2, 2, 100])  # AC9
-    executeAC("netlistAC8.txt", "AC", [4], [2, 6, 100])  # AC8
-    executeAC("netlistAC10.txt", "AC", [4, 5], [-2, 3, 100])  # AC10
+    executeAC('netlistAC1.txt','AC',[1], [0.01, 100, 100])  # AC1
+    executeAC('netlistAC2.txt','AC',[1], [0.01, 200, 100])  # AC2
+    executeAC('netlistAC3.txt','AC',[2], [0.01, 100, 100])  # AC3
+    executeAC('netlistAC4.txt','AC',[2,3], [0.01, 500, 1000])  # AC4
+    executeAC('netlistAC5.txt','AC',[3], [0.01, 1000, 1000])  # AC5
+    executeAC('netlistAC6.txt','AC',[2,5], [0.01, 2e3, 1000])  # AC6
+    executeAC('netlistAC7.txt','AC',[2,7], [0.01, 100, 1000])  # AC7
+    executeAC('netlistAC8.txt','AC',[4], [100, 100e3, 100])  # AC9
+    executeAC('netlistAC9.txt','AC',[2,3,4,5,6], [0.01, 100, 1000])  # AC8
+    executeAC('netlistAC10.txt','AC',[4,5], [0.01, 500, 1000]) # AC10
 
 
 def compareDC(execution, result):
