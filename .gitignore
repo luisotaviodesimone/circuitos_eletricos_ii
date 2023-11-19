@@ -6,3 +6,5 @@ pyvenv.cfg
 __pycache__/
 graphs/
 netlists/
+testesDC/
+testesTRAN/
