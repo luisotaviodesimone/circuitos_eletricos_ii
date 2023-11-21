@@ -57,7 +57,9 @@ def main(
 
     else:  # AC
         (start_point, end_point, number_of_points) = params
-        frequencies = np.logspace(np.log10(start_point), np.log10(end_point), number_of_points)
+        frequencies = np.logspace(
+            np.log10(start_point), np.log10(end_point), number_of_points
+        )
 
         desired_voltage_modules = np.zeros(
             (len(desired_nodes), frequencies.shape[0]), dtype=np.complex128

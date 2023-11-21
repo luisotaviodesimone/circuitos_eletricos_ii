@@ -1,11 +1,11 @@
 import os
-import trab2luisotaviodesimone as t2
+import trab3luisotaviodesimone as t3
 from plot import plot_bode_duo
 import numpy as np
 
 
 def executeAC(netlist_file, current_type, desired_nodes, params, enable_print=False):
-    frequencies, desired_nodes_modules, desired_nodes_phases = t2.main(
+    frequencies, desired_nodes_modules, desired_nodes_phases = t3.main(
         f"{os.getcwd()}\\netlists\\{netlist_file}",
         current_type,
         desired_nodes,
@@ -24,8 +24,8 @@ def executeAC(netlist_file, current_type, desired_nodes, params, enable_print=Fa
 
 
 def executeDC(netlist_file, current_type, desired_nodes, params, enable_print=False):
-    voltage_matrix = t2.main(
-        f"{os.getcwd()}\\netlists\\{netlist_file}",
+    voltage_matrix = t3.main(
+        f"{os.getcwd()}\\testesDC\\{netlist_file}",
         current_type,
         desired_nodes,
         params,
@@ -35,6 +35,46 @@ def executeDC(netlist_file, current_type, desired_nodes, params, enable_print=Fa
     return voltage_matrix
 
 
+def compareDC(execution, result):
+    print(
+        f"{execution} == {result} \n",
+        np.allclose(execution, result, rtol=1e-03, atol=1e-03),
+        "\n",
+    )
+
+
+def continuous_current():
+    print("teste1.txt")
+    compareDC(
+        executeDC("teste1.txt", "DC", [1, 2], [1e-10, [0, 0.1, 0.1]]), [2.0, 1.30491003]
+    )
+
+    print("teste2.txt")
+    compareDC(executeDC("teste2.txt", "DC", [2], [1e-14, [0, 3, 3]]), [0.73068013])
+
+    print("teste3.txt")
+    compareDC(executeDC("teste3.txt", "DC", [2], [1e-12, [0, 0, 2]]), [2])
+
+    print("teste4.txt")
+    compareDC(executeDC("teste4.txt", "DC", [2], [1e-12, [0, 0, 2]]), [1.9])
+
+    print("teste5.txt")
+    compareDC(executeDC("teste5.txt", "DC", [1, 2], [1e-12, [0, 1, 2]]), [5, 4.2781936])
+
+    print("teste6.txt")
+    compareDC(
+        executeDC("teste6.txt", "DC", [1, 2, 3], [1e-14, [0, 5, 1, -5]]),
+        [5, 4.2781936, -5],
+    )
+
+    print("teste7.txt")
+    compareDC(
+        executeDC("teste7.txt", "DC", [1, 2, 3], [1e-14, [0, -5, 4, 5]]),
+        [-5, 4.2781936, 5],
+    )
+
+
+continuous_current()
 
 """
 main(nomeArquivo, "DC" ou "TRANS", [lista de nós desejados], [lista de parâmetros])

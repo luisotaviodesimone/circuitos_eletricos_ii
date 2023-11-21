@@ -310,3 +310,22 @@ def transformer(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float)
     I_matrix = np.r_[I_matrix, np.zeros((2, 1), dtype=np.complex128)]
 
     return G_matrix, I_matrix
+
+
+def diode(line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, w: float):
+    [name, pos_node, neg_node, Is, nVt, *_] = line.split(" ")
+
+    pos_node = int(pos_node)
+    neg_node = int(neg_node)
+    Is = float(Is)
+    nVt = float(nVt)
+
+    diode_tension = 0.7
+
+    if neg_node - pos_node > 1:
+        diode_tension = 1
+
+    elif neg_node - pos_node < -20:
+        diode_tension = -20
+
+    Id = Is * (np.exp((pos_node - neg_node) / (nVt * diode_tension)) - 1)

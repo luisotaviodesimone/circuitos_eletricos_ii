@@ -22,7 +22,9 @@ def read_file(
             elif line.startswith("C"):
                 g_matrix = lotdsstamp.capacitor(line, g_matrix, omega)
             elif line.startswith("L"):
-                g_matrix, i_matrix = lotdsstamp.inductor(line, g_matrix, i_matrix, omega)
+                g_matrix, i_matrix = lotdsstamp.inductor(
+                    line, g_matrix, i_matrix, omega
+                )
             elif line.startswith("I"):
                 i_matrix = lotdsstamp.current_source(
                     line, i_matrix, circuit_current_type
@@ -46,7 +48,9 @@ def read_file(
                     line, g_matrix, i_matrix
                 )
             elif line.startswith("K"):
-                g_matrix, i_matrix = lotdsstamp.transformer(line, g_matrix, i_matrix, omega)
+                g_matrix, i_matrix = lotdsstamp.transformer(
+                    line, g_matrix, i_matrix, omega
+                )
             else:
                 raise Exception("Not known component")
 
