@@ -74,7 +74,72 @@ def continuous_current():
     )
 
 
-continuous_current()
+# continuous_current()
+
+
+def estampaResistor(a, b, R, G):
+    G[a, a] = G[a, a] + 1 / R
+    G[a, b] = G[a, b] - 1 / R
+    G[b, a] = G[b, a] - 1 / R
+    G[b, b] = G[b, b] + 1 / R
+    return G
+
+
+def estampaFonteInd(a, b, Iin, I):
+    """Considera o sentido da corrente de a para b"""
+    I[a] = I[a] - Iin
+    I[b] = I[b] + Iin
+    return I
+
+
+def estampaResistorQuadratico(a, b, e, G, I):
+    """Considera que a é o nó positivo e b é o nó negativo"""
+    v = e[a] - e[b]
+    G0 = 2 * v
+    I0 = v**2 - G0 * v
+    G = estampaResistor(a, b, 1 / G0, G)
+    I = estampaFonteInd(a, b, I0, I)
+    return G, I
+
+
+def testeFernanda():
+    k = 0
+
+    tol = 1e-12
+
+    e0 = np.array([0, 1])
+
+    Gref = np.zeros([2, 2])
+
+    Iref = np.zeros(2)
+
+    Gref = estampaResistor(0, 1, 2, Gref)
+
+    Iref = estampaFonteInd(0, 1, 1 / 2, Iref)
+
+    while k < 100:
+        # print(Gref)
+        # print(Iref)
+        Gn, In = estampaResistorQuadratico(1, 0, e0, Gref.copy(), Iref.copy())
+        # print(Gn)
+        # print(In)
+
+        Gn = Gn[1:, 1:]
+        In = In[1:]
+        e = np.linalg.solve(Gn, In)
+
+        if np.max(np.abs(e - e0[1:])) < tol:
+            break
+
+        print("e", e)
+        input("-------------------------------------------")
+        e0 = np.hstack((np.array([0]), e))
+        print("e0", e0)
+
+        k = k + 1
+
+
+testeFernanda()
 
 """
 main(nomeArquivo, "DC" ou "TRANS", [lista de nós desejados], [lista de parâmetros])

@@ -12,6 +12,7 @@ def read_file(
     i_matrix: np.ndarray,
     circuit_current_type: str,
     omega: float = 0,
+    v_matrix: np.ndarray = np.array([]),
 ):
     with open(filepath) as f:
         for line in f:
@@ -50,6 +51,10 @@ def read_file(
             elif line.startswith("K"):
                 g_matrix, i_matrix = lotdsstamp.transformer(
                     line, g_matrix, i_matrix, omega
+                )
+            elif line.startswith("D"):
+                g_matrix, i_matrix = lotdsstamp.diode(
+                    line, g_matrix, i_matrix, v_matrix
                 )
             else:
                 raise Exception("Not known component")

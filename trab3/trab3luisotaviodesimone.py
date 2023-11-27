@@ -55,7 +55,29 @@ def main(
 
         return result
 
-    else:  # AC
+    elif current_type == "TRANS":
+        tol = params[0]
+        voltage_matrix = params[1]
+
+        k = 0
+        while k < 100:
+            mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
+                netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix
+            )
+
+            mounted_g_matrix = mounted_g_matrix[1:, 1:]
+            mounted_i_matrix = mounted_i_matrix[1:]
+
+            voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
+
+            if np.max(np.abs(voltage_matrix - voltage_matrix)) < tol:
+                break
+
+            k += 1
+
+        return voltage_matrix
+
+    else:
         (start_point, end_point, number_of_points) = params
         frequencies = np.logspace(
             np.log10(start_point), np.log10(end_point), number_of_points
