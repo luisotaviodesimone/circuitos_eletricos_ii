@@ -1,3 +1,4 @@
+import math
 import numpy as np
 
 
@@ -326,15 +327,15 @@ def diode(
     nVt = float(nVt)
 
     # Should this be set some other way?
-    Vd = 0.7
+    Vd = float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])
 
-    if (V_matrix[neg_node, 0] - V_matrix[pos_node, 0]) > 1:
+    if (float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])) > 1:
         Vd = 1
-    elif (V_matrix[neg_node, 0] - V_matrix[pos_node, 0]) < -20:
+    elif (float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])) < -20:
         Vd = -20
 
-    G0 = (Is * (np.exp(Vd / nVt))) / nVt
-    I0 = Is * (np.exp(Vd / nVt) - 1) - G0 * Vd
+    G0 = (Is * (math.e ** (Vd / nVt))) / nVt
+    I0 = Is * (math.e ** (Vd / nVt) - 1) - G0 * Vd
 
     G_matrix = resistence(f"R {neg_node} {pos_node} {1/G0}", G_matrix)
     I_matrix = current_source(f"I {pos_node} {neg_node} DC {I0}", I_matrix, "DC")
