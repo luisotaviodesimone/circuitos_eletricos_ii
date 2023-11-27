@@ -97,6 +97,7 @@ def transient_regime():
     print("teste1.txt")
     executeTRAN("teste1.txt", "DC", [1, 2], [1e-10, [0, 0.1, 0.1]])
 
+
 """
 main(nomeArquivo, "DC" ou "TRAN", [lista de nós desejados], [lista de parâmetros])
 
