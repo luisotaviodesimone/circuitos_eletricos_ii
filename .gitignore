@@ -8,3 +8,6 @@ graphs/
 netlists/
 testesDC/
 testesTRAN/
+lib
+lib64
+bin
