@@ -1,6 +1,6 @@
 from webbrowser import get
 import numpy as np
-from lotdsformatting import color, print_voltage_matrix, get_desired_nodes
+from lotdsformatting import color, print_voltage_matrix
 import lotdsread
 import sys
 from typing import Tuple, Type
@@ -53,7 +53,7 @@ def main(
 
             voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
 
-            print(voltage_matrix)
+            # print(voltage_matrix)
 
             if np.max(np.abs(voltage_matrix[:max_node] - voltage_matrix_0[1:])) < tol:
                 break
