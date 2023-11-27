@@ -1,11 +1,12 @@
+from webbrowser import get
 import numpy as np
-from lotdsformatting import color, print_voltage_matrix
+from lotdsformatting import color, print_voltage_matrix, get_desired_nodes
 import lotdsread
 import sys
 from typing import Tuple, Type
 
 
-def create_g_matrix_and_i_matrix(filepath: str) -> Tuple[np.ndarray, np.ndarray]:
+def create_g_matrix_and_i_matrix(filepath: str) -> Tuple[np.ndarray, np.ndarray, int]:
     max_node = 0
 
     with open(filepath) as f:
@@ -24,7 +25,7 @@ def create_g_matrix_and_i_matrix(filepath: str) -> Tuple[np.ndarray, np.ndarray]
     g_matrix = np.zeros((max_node + 1, max_node + 1), dtype=np.complex128)
     i_matrix = np.zeros((max_node + 1, 1), dtype=np.complex128)
 
-    return g_matrix, i_matrix
+    return g_matrix, i_matrix, max_node
 
 
 def main(
@@ -34,20 +35,31 @@ def main(
     params: list = [0, 0, 0],
     enable_print: bool = False,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
-    g_matrix, i_matrix = create_g_matrix_and_i_matrix(netlist_file)
+    g_matrix, i_matrix, max_node = create_g_matrix_and_i_matrix(netlist_file)
+    voltage_matrix_0 = np.array(params[1])[..., None]  # transpose array
 
     if current_type == "DC":
-        mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
-            netlist_file, g_matrix, i_matrix, current_type
-        )
+        tol = params[0]
+        k = 0
 
-        mounted_g_matrix = mounted_g_matrix[1:, 1:]
-        mounted_i_matrix = mounted_i_matrix[1:]
+        voltage_matrix = voltage_matrix_0
+        while k < 100:
+            mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
+                netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix_0
+            )
 
-        voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
+            mounted_g_matrix = mounted_g_matrix[1:, 1:]
+            mounted_i_matrix = mounted_i_matrix[1:]
 
-        if enable_print:
-            print_voltage_matrix(voltage_matrix, netlist_file)
+            voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
+
+            print(voltage_matrix)
+
+            if np.max(np.abs(voltage_matrix[:max_node] - voltage_matrix_0[1:])) < tol:
+                break
+
+            k += 1
+            voltage_matrix_0 = np.vstack((np.array([0]), voltage_matrix[:max_node]))
 
         result = np.array([])
         for i in range(len(desired_nodes)):
@@ -55,11 +67,11 @@ def main(
 
         return result
 
-    elif current_type == "TRANS":
+    elif current_type == "TRAN":
         tol = params[0]
-        voltage_matrix = params[1]
 
         k = 0
+        voltage_matrix = voltage_matrix_0
         while k < 100:
             mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
                 netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix
@@ -70,10 +82,11 @@ def main(
 
             voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
 
-            if np.max(np.abs(voltage_matrix - voltage_matrix)) < tol:
+            if np.max(np.abs(voltage_matrix - voltage_matrix_0)) < tol:
                 break
 
             k += 1
+            voltage_matrix_0 = np.vstack((np.array([0]), voltage_matrix))
 
         return voltage_matrix
 
@@ -91,7 +104,7 @@ def main(
         )
 
         for i in range(len(frequencies)):
-            g_matrix, i_matrix = create_g_matrix_and_i_matrix(netlist_file)
+            g_matrix, i_matrix, max_node = create_g_matrix_and_i_matrix(netlist_file)
 
             omega = float(frequencies[i] * 2 * np.pi)
 
