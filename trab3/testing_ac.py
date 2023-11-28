@@ -11,7 +11,6 @@ def executeAC(netlist_file, current_type, desired_nodes, params, enable_print=Fa
         current_type,
         desired_nodes,
         params,
-        enable_print,
     )
 
     for i in range(len(desired_nodes)):
@@ -30,7 +29,6 @@ def executeTRAN(netlist_file, current_type, desired_nodes, params, enable_print=
         current_type,
         desired_nodes,
         params,
-        enable_print,
     )
 
     for i in range(len(desired_nodes)):

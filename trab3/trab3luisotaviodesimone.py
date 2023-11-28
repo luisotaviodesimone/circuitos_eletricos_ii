@@ -3,7 +3,7 @@ import numpy as np
 from lotdsformatting import color, print_voltage_matrix
 import lotdsread
 import sys
-from typing import Tuple, Type
+from typing import Iterable, Tuple, Union
 
 
 def create_g_matrix_and_i_matrix(filepath: str) -> Tuple[np.ndarray, np.ndarray, int]:
@@ -33,7 +33,7 @@ def main(
     current_type: str,
     desired_nodes: list[int],
     params: list = [0, 0, 0],
-):
+) -> Iterable[np.ndarray]:
     g_matrix, i_matrix, max_node = create_g_matrix_and_i_matrix(netlist_file)
 
     if current_type == "DC":
