@@ -33,18 +33,17 @@ def main(
     current_type: str,
     desired_nodes: list[int],
     params: list = [0, 0, 0],
-    enable_print: bool = False,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray] | np.ndarray:
+):
     g_matrix, i_matrix, max_node = create_g_matrix_and_i_matrix(netlist_file)
-    voltage_matrix_0 = np.array(params[1])[..., None]  # transpose array
 
     if current_type == "DC":
         tol = params[0]
         k = 0
+        voltage_matrix_0 = np.array(params[1])[..., None]  # transpose array
 
         voltage_matrix = voltage_matrix_0
         while k < 100:
-            mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
+            mounted_g_matrix, mounted_i_matrix, _ = lotdsread.read_file(
                 netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix_0
             )
 
@@ -66,13 +65,29 @@ def main(
         return result
 
     elif current_type == "TRAN":
-        tol = params[0]
+        final_time: float = params[0]
+        step: float = params[1]
+        tol: float = params[2]
+        voltage_matrix_0 = np.array(params[3])[..., None]  # transpose array
 
-        k = 0
+        points_number = int(final_time / step)
+
         voltage_matrix = voltage_matrix_0
-        while k < 100:
-            mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
-                netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix_0
+
+        time = np.linspace(0, final_time, points_number)
+
+        it0 = 0
+        for i in range(1, points_number):
+            mounted_g_matrix, mounted_i_matrix, it0 = lotdsread.read_file(
+                netlist_file,
+                g_matrix,
+                i_matrix,
+                current_type,
+                0,
+                voltage_matrix_0,
+                step=step,
+                time=time[i],
+                it0=it0,
             )
 
             mounted_g_matrix = mounted_g_matrix[1:, 1:]
@@ -83,14 +98,18 @@ def main(
             if np.max(np.abs(voltage_matrix[:max_node] - voltage_matrix_0[1:])) < tol:
                 break
 
-            k += 1
-            voltage_matrix_0 = np.vstack((np.array([0]), voltage_matrix[:max_node]))
+            voltage_matrix_0 = np.hstack(
+                (
+                    voltage_matrix_0,
+                    np.vstack((np.array([0]), voltage_matrix[:max_node])),
+                )
+            )
 
-        result = np.array([])
+        result = np.zeros([len(desired_nodes), len(time)])
         for i in range(len(desired_nodes)):
-            result = np.append(result, voltage_matrix[desired_nodes[i] - 1, 0].real)
+            result[i] = voltage_matrix_0[desired_nodes[i]].real
 
-        return result
+        return (time, result)
 
     else:
         (start_point, end_point, number_of_points) = params
@@ -110,7 +129,7 @@ def main(
 
             omega = float(frequencies[i] * 2 * np.pi)
 
-            mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
+            mounted_g_matrix, mounted_i_matrix, _ = lotdsread.read_file(
                 netlist_file, g_matrix, i_matrix, current_type, omega
             )
 

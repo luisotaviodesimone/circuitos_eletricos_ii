@@ -22,3 +22,10 @@ def plot_bode_uni(freqs, modules, phases):
     ax2 = ax1.twinx()
     ax2.semilogx(freqs, phases, "r--")
     plt.show()
+
+
+def plot_tran(tempo, result, netlist_file, desired_node):
+    plt.figure(num=f"{netlist_file}-Node {desired_node}")
+
+    plt.plot(tempo, result)
+    plt.show()

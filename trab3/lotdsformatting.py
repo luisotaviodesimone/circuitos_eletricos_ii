@@ -22,3 +22,10 @@ def print_voltage_matrix(voltage_matrix: np.ndarray, filepath: str):
         print(
             f"\nNode {i + 1}: {color(voltage_matrix[i,0], 'green')} {color('V', 'blue')}\n"
         )
+
+
+def safe_list_get(l, idx_row, idx_column, default):
+    try:
+        return l[idx_row][idx_column]
+    except IndexError:
+        return default
