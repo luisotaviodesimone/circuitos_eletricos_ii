@@ -53,8 +53,6 @@ def main(
 
             voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
 
-            # print(voltage_matrix)
-
             if np.max(np.abs(voltage_matrix[:max_node] - voltage_matrix_0[1:])) < tol:
                 break
 
@@ -74,7 +72,7 @@ def main(
         voltage_matrix = voltage_matrix_0
         while k < 100:
             mounted_g_matrix, mounted_i_matrix = lotdsread.read_file(
-                netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix
+                netlist_file, g_matrix, i_matrix, current_type, 0, voltage_matrix_0
             )
 
             mounted_g_matrix = mounted_g_matrix[1:, 1:]
@@ -82,13 +80,17 @@ def main(
 
             voltage_matrix = np.linalg.solve(mounted_g_matrix, mounted_i_matrix)
 
-            if np.max(np.abs(voltage_matrix - voltage_matrix_0)) < tol:
+            if np.max(np.abs(voltage_matrix[:max_node] - voltage_matrix_0[1:])) < tol:
                 break
 
             k += 1
-            voltage_matrix_0 = np.vstack((np.array([0]), voltage_matrix))
+            voltage_matrix_0 = np.vstack((np.array([0]), voltage_matrix[:max_node]))
 
-        return voltage_matrix
+        result = np.array([])
+        for i in range(len(desired_nodes)):
+            result = np.append(result, voltage_matrix[desired_nodes[i] - 1, 0].real)
+
+        return result
 
     else:
         (start_point, end_point, number_of_points) = params

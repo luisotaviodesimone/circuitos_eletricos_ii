@@ -13,6 +13,7 @@ def read_file(
     circuit_current_type: str,
     omega: float = 0,
     v_matrix: np.ndarray = np.array([]),
+    time: float = 0,
 ):
     with open(filepath) as f:
         for line in f:
@@ -28,11 +29,11 @@ def read_file(
                 )
             elif line.startswith("I"):
                 i_matrix = lotdsstamp.current_source(
-                    line, i_matrix, circuit_current_type
+                    line, i_matrix, circuit_current_type, omega, time
                 )
             elif line.startswith("V"):
                 g_matrix, i_matrix = lotdsstamp.voltage_source(
-                    line, g_matrix, i_matrix, circuit_current_type
+                    line, g_matrix, i_matrix, circuit_current_type, omega, time
                 )
             elif line.startswith("G"):
                 g_matrix = lotdsstamp.voltage_controlled_current_source(line, g_matrix)
@@ -54,7 +55,7 @@ def read_file(
                 )
             elif line.startswith("D"):
                 g_matrix, i_matrix = lotdsstamp.diode(
-                    line, g_matrix, i_matrix, v_matrix
+                    line, g_matrix, i_matrix, v_matrix, omega, time
                 )
             else:
                 raise Exception("Not known component")

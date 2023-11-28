@@ -2,33 +2,12 @@ import math
 import numpy as np
 
 
-def current_source(line: str, I_matrix: np.ndarray, circuit_current_type: str):
-    [name, drain_node, inject_node, current_type, value_or_amp, *phase] = line.split(
-        " "
-    )
-
-    drain_node = int(drain_node)
-    inject_node = int(inject_node)
-    value_or_amp = float(value_or_amp)
-
-    if len(phase) == 0:
-        phase = 0
-    else:
-        phase = float(phase[0])
-
-    if circuit_current_type != current_type:
-        insertion = 0
-    else:
-        insertion = value_or_amp * np.exp(1j * phase)
-
-    I_matrix[drain_node, 0] -= insertion
-    I_matrix[inject_node, 0] += insertion
-
-    return I_matrix
-
-
-def voltage_source(
-    line: str, G_matrix: np.ndarray, I_matrix: np.ndarray, circuit_current_type: str
+def current_source(
+    line: str,
+    I_matrix: np.ndarray,
+    circuit_current_type: str,
+    omega: float,
+    time: float,
 ):
     [name, drain_node, inject_node, current_type, value_or_amp, *phase] = line.split(
         " "
@@ -43,10 +22,60 @@ def voltage_source(
     else:
         phase = float(phase[0])
 
-    if circuit_current_type != current_type:
+    if (
+        (circuit_current_type == "AC" and current_type == "DC")
+        or (circuit_current_type == "DC" and current_type == "AC")
+        or (circuit_current_type == "DC" and current_type == "SIN")
+        or (circuit_current_type == "TRAN" and current_type == "DC")
+        # or (circuit_current_type == "TRAN" and current_type == "AC")
+    ):
         insertion = 0
+    elif current_type == "SIN":
+        insertion = value_or_amp * math.cos(
+            2 * math.pi * omega * time + phase * math.pi / 180
+        )
     else:
         insertion = value_or_amp * np.exp(1j * phase)
+
+    I_matrix[drain_node, 0] -= insertion
+    I_matrix[inject_node, 0] += insertion
+
+    return I_matrix
+
+
+def voltage_source(
+    line: str,
+    G_matrix: np.ndarray,
+    I_matrix: np.ndarray,
+    circuit_current_type: str,
+    omega: float,
+    time: float,
+):
+    [name, drain_node, inject_node, current_type, value_or_amp, *phase] = line.split(
+        " "
+    )
+
+    drain_node = int(drain_node)
+    inject_node = int(inject_node)
+    value_or_amp = float(value_or_amp)
+
+    if len(phase) == 0:
+        phase = 0
+    else:
+        phase = float(phase[0])
+
+    if (
+        (circuit_current_type == "AC" and current_type == "DC")
+        or (circuit_current_type == "DC" and current_type == "AC")
+        or (circuit_current_type == "DC" and current_type == "SIN")
+        # or (circuit_current_type == "TRAN" and current_type == "DC")
+        # or (circuit_current_type == "TRAN" and current_type == "AC")
+    ):
+        insertion = 0
+    else:
+        insertion = value_or_amp * math.cos(
+            2 * math.pi * omega * time + phase * math.pi / 180
+        )
 
     i_column = np.zeros((G_matrix.shape[0], 1), dtype=np.complex128)
     i_column[drain_node, 0] = 1
@@ -318,6 +347,8 @@ def diode(
     G_matrix: np.ndarray,
     I_matrix: np.ndarray,
     V_matrix: np.ndarray,
+    omega: float,
+    time: float,
 ):
     [name, pos_node, neg_node, Is, nVt, *_] = line.split(" ")
 
@@ -337,6 +368,8 @@ def diode(
     I0 = Is * (math.e ** (Vd / nVt) - 1) - G0 * Vd
 
     G_matrix = resistence(f"R {neg_node} {pos_node} {1/G0}", G_matrix)
-    I_matrix = current_source(f"I {pos_node} {neg_node} DC {I0}", I_matrix, "DC")
+    I_matrix = current_source(
+        f"I {pos_node} {neg_node} DC {I0}", I_matrix, "DC", omega, time
+    )
 
     return G_matrix, I_matrix
