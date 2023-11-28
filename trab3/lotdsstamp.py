@@ -326,12 +326,11 @@ def diode(
     Is = float(Is)
     nVt = float(nVt)
 
-    # Should this be set some other way?
-    Vd = float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])
+    Vd = V_matrix[pos_node, 0].real - V_matrix[neg_node, 0].real
 
-    if (float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])) > 1:
+    if (V_matrix[pos_node, 0].real - V_matrix[neg_node, 0].real) > 1:
         Vd = 1
-    elif (float(V_matrix[pos_node, 0]) - float(V_matrix[neg_node, 0])) < -20:
+    elif (V_matrix[pos_node, 0].real - V_matrix[neg_node, 0].real) < -20:
         Vd = -20
 
     G0 = (Is * (math.e ** (Vd / nVt))) / nVt
