@@ -38,35 +38,35 @@ def executeTRAN(netlist_file, current_type, desired_nodes, params, enable_print=
 
 
 def transient_regime():
-    print(color("testeTran1.txt", "green"))
-    executeTRAN("testeTran1.txt", "TRAN", [1, 2], [2, 0.2e-3, 1e-10, [0, 1, 0.5]])
+    # print(color("testeTran1.txt", "green"))
+    # executeTRAN("testeTran1.txt", "TRAN", [1, 2], [2, 0.2e-3, 1e-10, [0, 1, 0.5]])
 
-    print(color("testeTran2.txt", "green"))
-    executeTRAN("testeTran2.txt", "TRAN", [1, 2], [2, 0.2e-3, 1e-4, [0, 1, 0]])
+    # print(color("testeTran2.txt", "green"))
+    # executeTRAN("testeTran2.txt", "TRAN", [1, 2], [2, 0.2e-3, 1e-4, [0, 1, 0]])
 
     print(color("testeTran3.txt", "green"))
     executeTRAN("testeTran3.txt", "TRAN", [1, 2], [3, 0.2e-3, 1e-4, [0, 0, 0]])
 
-    print(color("testeTran4.txt", "green"))
-    executeTRAN("testeTran4.txt", "TRAN", [1, 2], [3, 0.2e-3, 1e-4, [0, 0, 0]])
+    # print(color("testeTran4.txt", "green"))
+    # executeTRAN("testeTran4.txt", "TRAN", [1, 2], [3, 0.2e-3, 1e-4, [0, 0, 0]])
 
-    print(color("testeTran5.txt", "green"))
-    executeTRAN("testeTran5.txt", "TRAN", [1, 2], [3, 0.2e-3, 1e-4, [0, 9.5, 0]])
+    # print(color("testeTran5.txt", "green"))
+    # executeTRAN("testeTran5.txt", "TRAN", [1, 2], [3, 0.2e-3, 1e-4, [0, 9.5, 0]])
 
-    print(color("testeTran6.txt", "green"))
-    executeTRAN("testeTran6.txt", "TRAN", [1, 3], [2, 0.5e-4, 1e-4, [0, 0, 0, 0]])
+    # print(color("testeTran6.txt", "green"))
+    # executeTRAN("testeTran6.txt", "TRAN", [1, 3], [2, 0.5e-4, 1e-4, [0, 0, 0, 0]])
 
-    print(color("testeTran7.txt", "green"))
-    executeTRAN("testeTran7.txt", "TRAN", [1, 2, 3], [2, 0.5e-4, 1e-4, [0, 0, 0, 0]])
+    # print(color("testeTran7.txt", "green"))
+    # executeTRAN("testeTran7.txt", "TRAN", [1, 2, 3], [2, 0.5e-4, 1e-4, [0, 0, 0, 0]])
 
-    print(color("testeTran8.txt", "green"))
-    executeTRAN("testeTran8.txt", "TRAN", [1, 2, 3], [4, 0.2e-3, 1e-4, [0, 0, 0, 0]])
+    # print(color("testeTran8.txt", "green"))
+    # executeTRAN("testeTran8.txt", "TRAN", [1, 2, 3], [4, 0.2e-3, 1e-4, [0, 0, 0, 0]])
 
-    print(color("testeTran9.txt", "green"))
-    executeTRAN("testeTran9.txt", "TRAN", [1, 2], [4, 0.2e-3, 1e-4, [0, 1, 1]])
+    # print(color("testeTran9.txt", "green"))
+    # executeTRAN("testeTran9.txt", "TRAN", [1, 2], [4, 0.2e-3, 1e-4, [0, 1, 1]])
 
-    print(color("testeTran10.txt", "green"))
-    executeTRAN("testeTran10.txt", "TRAN", [1, 2, 3], [4, 0.2e-3, 1e-4, [0, 5, 5, 0]])
+    # print(color("testeTran10.txt", "green"))
+    # executeTRAN("testeTran10.txt", "TRAN", [1, 2, 3], [4, 0.2e-3, 1e-4, [0, 5, 5, 0]])
 
 
 transient_regime()
